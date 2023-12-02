@@ -1,14 +1,19 @@
 from flask import Flask
-
+from adham import app as adham
+from nady import app as nady
+from nemr import app as nemr
 app = Flask(__name__)
 
+
+# Register blueprints
+app.register_blueprint(adham, url_prefix='/')
+app.register_blueprint(nady, url_prefix='/')
+app.register_blueprint(nemr, url_prefix='/')
+
+
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<h1 style='text-align: center;'>Hello From Main Side</h1>"
 
 
 
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
