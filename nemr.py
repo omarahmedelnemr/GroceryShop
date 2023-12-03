@@ -140,7 +140,7 @@ def signup():
     return response,status
 
 # Sending OTP for Verfication 
-@app.route("/sendOTP",methods=["POST"])
+@app.route("/send-otp",methods=["POST"])
 def send_OTP():
     try:
         email = request.json.get("email")
@@ -173,7 +173,7 @@ def send_OTP():
         return {"message":"Somthing Went Wrong"},406
 
 # Validating OTP for Verfication 
-@app.route("/checkOTP",methods=["POST"])
+@app.route("/check-otp",methods=["POST"])
 def check_OTP():
     try:
         email = request.json.get("email")
