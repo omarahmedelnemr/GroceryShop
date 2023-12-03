@@ -7,7 +7,7 @@ from middleware.sendMail import generate_random_code,send_email
 
 jwtSecret = 'GroceryShop' 
 
-app = Blueprint('nemr', __name__)
+app = Blueprint('nemr', __name__,url_prefix='/')
 CORS(app)
 
 # MySQL configuration
