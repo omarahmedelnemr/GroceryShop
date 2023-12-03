@@ -168,9 +168,9 @@ def send_OTP():
         send_email(email,"Grocery Shop Verfication Code",f"Your OTP Code is :{otp}")
 
         cursor.close()
-        return "Email is Sent", 200
+        return {"message":"Email is Sent"}, 200
     except:
-        return "Somthing Went Wrong",406
+        return {"message":"Somthing Went Wrong"},406
 
 # Validating OTP for Verfication 
 @app.route("/checkOTP",methods=["POST"])
@@ -179,7 +179,7 @@ def check_OTP():
         email = request.json.get("email")
         otp_sent = request.json.get("otp")
         if email == None or otp_sent ==None:
-            return "Missing Parameter",406
+            return {"message":"Missing Parameter"},406
         # DB
         cursor = myDB.cursor()
 
@@ -188,7 +188,7 @@ def check_OTP():
         cursor.execute(query)
         otp_saved = cursor.fetchone()[0]
         if (int(otp_sent) != int(otp_saved)):
-            return "Wrong Code",404
+            return {"message":"Wrong Code"},404
         
         #  Delete From DB
         query = f"DELETE FROM otp where email = '{email}';"
@@ -201,7 +201,7 @@ def check_OTP():
 
         return {"message":"Email is Verified","token":token},200
     except:
-        return "Somthing Went Wrong",406
+        return {"message":"Somthing Went Wrong"},406
 
 # Change Password Using token and New Passwords
 @app.route('/forget-password',methods= ['POST'])
