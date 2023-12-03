@@ -14,7 +14,6 @@ app = Blueprint('nemr', __name__)
 def hello_world():
     return "<h1 style='text-align: center;'>Welcome From Nemr Side</h1>"
 
-
 CORS(app)
 
 # MySQL configuration
@@ -240,4 +239,5 @@ def change():
     except:
         cursor.close()
         return jsonify({'message': "Somthing went Wrong"}), 406
+
 
