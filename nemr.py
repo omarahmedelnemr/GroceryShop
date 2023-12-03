@@ -1,19 +1,13 @@
-from flask import Blueprint, request, jsonify, make_response,render_template_string
+from flask import Blueprint, request, jsonify
 import jwt
 import mysql.connector
 from flask_cors import CORS
-import datetime
 from middleware.labels import addLabels
 from middleware.sendMail import generate_random_code,send_email
 
 jwtSecret = 'GroceryShop' 
 
 app = Blueprint('nemr', __name__)
-
-@app.route("/nemr")
-def hello_world():
-    return "<h1 style='text-align: center;'>Welcome From Nemr Side</h1>"
-
 CORS(app)
 
 # MySQL configuration
