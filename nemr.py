@@ -189,14 +189,21 @@ def check_OTP():
     except:
         return "Somthing Went Wrong",406
 
-@app.route('/updatepassword',methods= ['POST'])
-def update():
+# Change Password Using token and New Passwords
+@app.route('/forget-password',methods= ['POST'])
+def forget():
     cursor = myDB.cursor()
     try:
 
         email = request.json.get("email")
+        token = request.json.get("token")
         password = request.json.get("newPassword")
 
+        # Check the Token
+        try:
+            verf = jwt.decode(token,jwtSecret,algorithms="HS256")
+        except:
+            return {"message":"The Token is Wrong, Not Authorized"},401
         # Insert a new user into the Users table
         query = f"UPDATE User SET password = '{password}' WHERE email = '{email}'"
         print(query)
@@ -211,7 +218,7 @@ def update():
     print(response)
     return response
 
-
+# Change Password Using old and New Passwords
 @app.route('/changePassword',methods= ['POST'])
 def change():
     try:
