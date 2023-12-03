@@ -1,7 +1,7 @@
 from flask import Flask
-from adham import app as adham
-from nady import app as nady
-from nemr import app as nemr
+from Developers.adham import app as adham
+from Developers.nady import app as nady
+from Developers.nemr import app as nemr
 app = Flask(__name__)
 
 
