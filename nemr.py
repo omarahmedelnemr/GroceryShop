@@ -29,6 +29,10 @@ def login():
         email = request.json.get('email')
         password = request.json.get('password')
 
+        # Check Parameter Exictence
+        if (email == None or password == None):
+            return {"message":"Missing Parameter"},406
+
         # Check if the user exists in the Users table
         query = f"SELECT * FROM User WHERE email = '{email}' AND password = '{password}'"
         cursor.execute(query)
@@ -74,6 +78,17 @@ def signup():
         password = request.json.get('password')
         birthDate = request.json.get('birthDate')
         address = request.json.get('address')
+
+        # Check Parameter Exictence
+        if (
+            email          == None 
+            or password    == None
+            or name        == None
+            or phonenumber == None
+            or birthDate   == None
+            or address     == None
+            ):
+            return {"message":"Missing Parameter"},406
 
         # Connect to the MySQL database
         cursor = myDB.cursor()
@@ -129,6 +144,11 @@ def signup():
 def send_OTP():
     try:
         email = request.json.get("email")
+        
+        # Check Parameter Exictence
+        if (email == None):
+            return {"message":"Missing Parameter"},406
+        
         otp = generate_random_code()
 
         # DB
@@ -192,7 +212,11 @@ def forget():
         email = request.json.get("email")
         token = request.json.get("token")
         password = request.json.get("newPassword")
-
+        
+        # Check Parameter Exictence
+        if (email == None or password == None or token == None):
+            return {"message":"Missing Parameter"},406
+        
         # Check the Token
         try:
             verf = jwt.decode(token,jwtSecret,algorithms="HS256")
@@ -213,7 +237,7 @@ def forget():
     return response
 
 # Change Password Using old and New Passwords
-@app.route('/changePassword',methods= ['POST'])
+@app.route('/change-password',methods= ['POST'])
 def change():
     try:
         cursor = myDB.cursor()
@@ -221,6 +245,10 @@ def change():
         email = request.json.get("email")
         oldpassword = request.json.get("oldpassword")
         newpassword = request.json.get("newPassword")
+
+        # Check Parameter Exictence
+        if (email == None or oldpassword == None or newpassword == None):
+            return {"message":"Missing Parameter"},406
 
         # Check Password
         query = f"SELECT password FROM User WHERE email = '{email}'"
