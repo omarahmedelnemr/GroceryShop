@@ -3,7 +3,7 @@ import jwt
 from flask_cors import CORS
 from middleware.labels import addLabels
 from middleware.sendMail import generate_random_code,send_email
-from main import myDB
+from DB_Connect import myDB
 
 jwtSecret = 'GroceryShop' 
 

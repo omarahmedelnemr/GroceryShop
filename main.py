@@ -1,5 +1,4 @@
 from flask import Flask
-import mysql.connector
 
 
 from Developers.adham import app as adham
@@ -18,12 +17,3 @@ def hello_world():
     return "<h1 style='text-align: center;'>Hello From Main Side</h1>"
 
 
-
-# MySQL configuration
-myDB = mysql.connector.connect(
-    host = 'localhost',
-    port = 3306,
-    user = 'root',
-    password = 'myownsql',
-    database = 'GroceryShop'    
-)

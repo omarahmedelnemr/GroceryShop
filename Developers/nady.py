@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from main import myDB
+from DB_Connect import myDB
 
 
 app = Blueprint('nady', __name__)
