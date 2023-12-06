@@ -1,5 +1,4 @@
 from flask import Flask
-from flaskext.mysql import MySQL
 import mysql.connector
 
 
@@ -14,22 +13,17 @@ app.register_blueprint(adham, url_prefix='/')
 app.register_blueprint(nady, url_prefix='/')
 app.register_blueprint(nemr, url_prefix='/')
 
-
-# Set up the connection parameters
-connection = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="12345",
-    database="ngrb"
-)
-
-# Create a cursor object to execute SQL queries
-cursor = connection.cursor()
-
-
 @app.route("/")
 def hello_world():
     return "<h1 style='text-align: center;'>Hello From Main Side</h1>"
 
 
 
+# MySQL configuration
+myDB = mysql.connector.connect(
+    host = 'localhost',
+    port = 3306,
+    user = 'root',
+    password = 'myownsql',
+    database = 'GroceryShop'    
+)

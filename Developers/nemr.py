@@ -1,23 +1,16 @@
 from flask import Blueprint, request, jsonify
 import jwt
-import mysql.connector
 from flask_cors import CORS
 from middleware.labels import addLabels
 from middleware.sendMail import generate_random_code,send_email
+from main import myDB
 
 jwtSecret = 'GroceryShop' 
 
 app = Blueprint('nemr', __name__,url_prefix='/')
 CORS(app)
 
-# MySQL configuration
-myDB = mysql.connector.connect(
-    host = 'localhost',
-    port = 3306,
-    user = 'root',
-    password = 'myownsql',
-    database = 'GroceryShop'    
-)
+
 
 # Endpoint for user login
 @app.route('/login', methods=['POST'])

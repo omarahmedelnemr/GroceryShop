@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from flaskext.mysql import MySQL
+from main import myDB
 
 
 app = Blueprint('nady', __name__)

@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify
+from main import myDB
+
 
 app = Blueprint('adham', __name__)
 
