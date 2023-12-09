@@ -1,7 +1,18 @@
-from flask import Blueprint, jsonify, request
-from DB_Connect import myDB
+from flask import Flask, jsonify, request
+import mysql.connector
 
-app = Blueprint('adham', __name__)
+# app = Blueprint('adham', __name__)
+# Tempraty for Error Handle
+# MySQL configuration
+app = Flask( __name__)
+myDB = mysql.connector.connect(
+    host = 'mysql-156876-0.cloudclusters.net',
+    port = 10026,
+    user = 'admin',
+    password = '7TE9ESeh',
+    database = 'GroceryShop'    
+)
+
 
 # Endpoint to search products by keyword
 @app.route('/getBySearch', methods=['GET'])
