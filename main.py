@@ -1,9 +1,9 @@
 from flask import Flask
 
 
-# from Developers.adham import app as adham
+from Developers.adham import app as adham
 from Developers.nady import app as nady
-# from Developers.nemr import app as nemr
+from Developers.nemr import app as nemr
 app = Flask(__name__)
 
 
@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 app.register_blueprint(nady, url_prefix='/')
 
-# app.register_blueprint(nemr, url_prefix='/')
+app.register_blueprint(nemr, url_prefix='/')
 
 @app.route("/")
 def hello_world():
