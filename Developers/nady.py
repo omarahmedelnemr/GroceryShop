@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from DB_Connect import myDB as sqlcon
-import mysql.connector
 
 app = Blueprint('nady', __name__)
 

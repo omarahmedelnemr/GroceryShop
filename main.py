@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 
 # Register blueprints
-# app.register_blueprint(adham, url_prefix='/')
+app.register_blueprint(adham, url_prefix='/')
 
 app.register_blueprint(nady, url_prefix='/')
 

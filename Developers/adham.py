@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Blueprint, Flask, jsonify, request
 import mysql.connector
 
-# app = Blueprint('adham', __name__)
+app = Blueprint('adham', __name__)
+
+
 # Tempraty for Error Handle
 # MySQL configuration
-app = Flask( __name__)
+
 myDB = mysql.connector.connect(
     host = 'mysql-156876-0.cloudclusters.net',
     port = 10026,
@@ -24,7 +26,7 @@ def get_by_search():
         cursor = myDB.cursor(dictionary=True)
 
        
-        query = f"SELECT * FROM Product WHERE productName LIKE '%{keyword}%'"
+        query = f"SELECT * FROM product WHERE productName LIKE '%{keyword}%'"
         cursor.execute(query)
         products = cursor.fetchall()
 
