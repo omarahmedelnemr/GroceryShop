@@ -1,23 +1,8 @@
 from flask import Blueprint, Flask, jsonify, request
 import mysql.connector
 
-<<<<<<< HEAD
+
 app = Flask(__name__)
-=======
-app = Blueprint('adham', __name__)
-
-
-# Tempraty for Error Handle
-# MySQL configuration
-
-myDB = mysql.connector.connect(
-    host = 'mysql-156876-0.cloudclusters.net',
-    port = 10026,
-    user = 'admin',
-    password = '7TE9ESeh',
-    database = 'GroceryShop'    
-)
->>>>>>> 56bea4a364c04441600ee669cecdecfd65460388
 
 # MySQL configuration
 myDB = mysql.connector.connect(
@@ -36,10 +21,10 @@ def get_by_search():
 
         cursor = myDB.cursor(dictionary=True)
 
-<<<<<<< HEAD
-=======
+
+
        
->>>>>>> 56bea4a364c04441600ee669cecdecfd65460388
+
         query = f"SELECT * FROM product WHERE productName LIKE '%{keyword}%'"
         cursor.execute(query)
         products = cursor.fetchall()
