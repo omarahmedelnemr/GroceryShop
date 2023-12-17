@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # MySQL configuration
 myDB = mysql.connector.connect(
-    host='http://mysql-158141-0.cloudclusters.net',
+    host='mysql-158141-0.cloudclusters.net',
     port=10014,
     user='admin',
     password='oGFpwVr8',
@@ -131,7 +131,7 @@ def add_payment_methods():
 
         cursor = myDB.cursor()
         # Corrected table name to 'PaymentMethods'
-        query = "INSERT INTO PaymentMethods (userID, cardNumber, cvv, cardHolderName) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO PayementMethods (userID, cardNumber, cvv, cardHolderName) VALUES (%s, %s, %s, %s)"
         values = (user_id, card_number, cvv, card_holder_name)
         cursor.execute(query, values)
         myDB.commit()
