@@ -6,11 +6,11 @@ app = Flask(__name__)
 
 # MySQL configuration
 myDB = mysql.connector.connect(
-    host = 'mysql-158141-0.cloudclusters.net',
-    port = 10014,
+    host='http://mysql-158141-0.cloudclusters.net',
+    port=10014,
     user='admin',
-    password = 'oGFpwVr8',
-    database = 'GroceryShop'    
+    password='oGFpwVr8',
+    database='GroceryShop'
 )
 
 # Endpoint to search products by keyword
@@ -102,7 +102,7 @@ def get_payment_methods():
         payment_methods_list = [
             {
                 'id': method['id'],
-                'userID': method['userID'],
+                'userID': method['userID'],-
                 'cardNumber': method['cardNumber'],
                 'cvv': method['cvv'],
                 'cardHolderName': method['cardHolderName'],
@@ -118,20 +118,20 @@ def get_payment_methods():
         print('Error executing getPaymentMethods query:', str(e))
         return jsonify({'success': False, 'error': 'Internal Server Error'}), 500
     
-    # Endpoint to add payment methods
+ # Endpoint to add payment methods
 @app.route('/addPaymentMethods', methods=['POST'])
 def add_payment_methods():
     try:
         data = request.json
 
-        user_id = data.get('id', '')
-        card_number = data.get('cardNumber', '')
-        cvv = data.get('cvv', '')
-        card_holder_name = data.get('cardholderName', '')
+        user_id = data.get('userID')
+        card_number = data.get('cardNumber')
+        cvv = data.get('cvv')
+        card_holder_name = data.get('cardHolderName')
 
         cursor = myDB.cursor()
-        # Insert the new payment method into the PayementMethods table
-        query = "INSERT INTO payementMethods (userID, cardNumber, cvv, cardHolderName) VALUES (%s, %s, %s, %s)"
+        # Corrected table name to 'PaymentMethods'
+        query = "INSERT INTO PaymentMethods (userID, cardNumber, cvv, cardHolderName) VALUES (%s, %s, %s, %s)"
         values = (user_id, card_number, cvv, card_holder_name)
         cursor.execute(query, values)
         myDB.commit()
@@ -141,9 +141,6 @@ def add_payment_methods():
     except Exception as e:
         print('Error adding payment method:', str(e))
         return jsonify({'success': False, 'error': 'Internal Server Error'}), 500
-
-
-
 
 
 # Endpoint to remove payment methods
