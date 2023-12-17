@@ -6,11 +6,11 @@ app = Flask(__name__)
 
 # MySQL configuration
 myDB = mysql.connector.connect(
-    host='mysql-156876-0.cloudclusters.net',
-    port=10026,
+    host = 'mysql-158141-0.cloudclusters.net',
+    port = 10014,
     user='admin',
-    password='7TE9ESeh',
-    database='GroceryShop'
+    password = 'oGFpwVr8',
+    database = 'GroceryShop'    
 )
 
 # Endpoint to search products by keyword
