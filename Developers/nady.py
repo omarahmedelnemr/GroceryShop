@@ -50,6 +50,38 @@ def fliter_by_price():
 
 
 
+@app.route('/confirm', methods=['POST'])
+def confirm():
+    try:
+  
+        userID= request.json.get('userID')
+        orderDate= request.json.get('orderDate')
+        delevaryDate= request.json.get('delevaryDate')
+        status= request.json.get('status')
+       
+        cursor = sqlcon.cursor()
+        query = f"""INSERT INTO `Order` (totalPrice, orderDate, delevaryDate, status, userID)
+                    VALUES (
+                        (SELECT Cart.totalPrice FROM Cart WHERE Cart.userID = {userID} ),
+                        {orderDate}, {delevaryDate}, {status}, {userID}
+                    ); """
+        cursor.execute(query)
+        data = cursor.fetchall()
+        # Close the database connection
+        cursor.close()
+        # Return the data as a JSON response
+        return jsonify(data)
+    
+    except:
+        response =  jsonify({'message': "Somthing went Wrong"})
+        status = 406
+
+
+    cursor.close()
+    return response,status
+
+
+
 @app.route('/filterbybrand', methods=['GET'])
 def fliter_by_brand():
     try:
