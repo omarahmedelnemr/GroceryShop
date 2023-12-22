@@ -54,23 +54,23 @@ def fliter_by_price():
 def confirm():
     try:
   
-        userID= request.json.get('userID')
-        orderDate= request.json.get('orderDate')
-        delevaryDate= request.json.get('delevaryDate')
-        status= request.json.get('status')
-       
+        userID = request.json.get('userID')
+        orderDate = request.json.get('orderDate')
+        delevaryDate = request.json.get('delevaryDate')
+        status = request.json.get('status')
+
         cursor = sqlcon.cursor()
         query = f"""INSERT INTO `Order` (totalPrice, orderDate, delevaryDate, status, userID)
-                    VALUES (
-                        (SELECT Cart.totalPrice FROM Cart WHERE Cart.userID = {userID} ),
-                        {orderDate}, {delevaryDate}, {status}, {userID}
-                    ); """
+            VALUES (
+                (SELECT Cart.totalPrice FROM Cart WHERE Cart.userID = '{userID}'),
+                '{orderDate}', '{delevaryDate}', '{status}', '{userID}'
+            ); """
+
         cursor.execute(query)
-        data = cursor.fetchall()
-        # Close the database connection
+        sqlcon.commit()
         cursor.close()
         # Return the data as a JSON response
-        return jsonify(data)
+        return jsonify({'success': True})
     
     except:
         response =  jsonify({'message': "Somthing went Wrong"})
