@@ -301,7 +301,7 @@ def get_user_cart_products():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 # Get All Products That Has a Discount
-@app.route('/get-discounts', methods=['GET'])
+@app.route('/discounts', methods=['GET'])
 def get_all_discounts():
     try:
 
@@ -332,3 +332,27 @@ def get_all_discounts():
     except Exception as e:
         print('Error executing get_user_orders query:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
+
+# Get All Brands on the System
+@app.route('/brands', methods=['GET'])
+def get_all_brands():
+    try:
+
+        # Create a cursor object to interact with the database
+        cursor = myDB.cursor(dictionary=True)
+
+        query = f"""
+            SELECT * From Brand
+                
+        """
+        cursor.execute(query)
+        discount_list = cursor.fetchall()
+
+        cursor.close()
+
+        return jsonify({'success': True, 'data': discount_list})
+
+    except Exception as e:
+        print('Error executing get_user_orders query:', str(e))
+        return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
+
