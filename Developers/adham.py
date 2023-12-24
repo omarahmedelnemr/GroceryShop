@@ -4,7 +4,7 @@ from DB_Connect import myDB
 
 app = Blueprint('adham', __name__)
 
-# Endpoint to search products by keyword
+# search products by keyword
 @app.route('/getBySearch', methods=['GET'])
 def get_by_search():
     try:
@@ -36,7 +36,7 @@ def get_by_search():
         print('Error executing search query:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
-# Endpoint to filter products by nationality
+# filter products by nationality
 @app.route('/filterByNationality', methods=['GET'])
 def filter_by_nationality():
     try:
@@ -68,7 +68,7 @@ def filter_by_nationality():
         print('Error executing nationality filter query:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
-# Endpoint to get payment methods for a user
+# get payment methods for a user
 @app.route('/getPaymentMethods', methods=['GET'])
 def get_payment_methods():
     try:
@@ -89,7 +89,7 @@ def get_payment_methods():
         print('Error executing getPaymentMethods query:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
-# Endpoint to add payment methods
+# add payment methods
 @app.route('/addPaymentMethods', methods=['POST'])
 def add_payment_methods():
     try:
@@ -121,7 +121,7 @@ def add_payment_methods():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 
-# Endpoint to remove payment methods
+# remove payment methods
 @app.route('/removePaymentMethods', methods=['DELETE'])
 def remove_payment_methods():
     try:
@@ -143,7 +143,7 @@ def remove_payment_methods():
         # Handle the exception (you might want to log it or return an error response)
         return jsonify({'success': False, 'message': f"Internal Server Error: {str(e)}"}), 500
     
-# Endpoint to get user's orders
+# get user's orders
 @app.route('/myOrder', methods=['GET'])
 def get_user_orders():
     try:
