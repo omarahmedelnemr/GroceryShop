@@ -20,7 +20,7 @@ app.register_blueprint(nemr, url_prefix='/')
 
 @app.route("/")
 def hello_world():
-    return "<h1 style='text-align: center;'>Hello From Main Side</h1>"
+    return "<h1 style='text-align: center;'>Hello From Our Grocery Shop API</h1>"
 
 
 
