@@ -186,7 +186,7 @@ def check_OTP():
         # Set a Security Token For Private Operations
         token = jwt.encode({"status":"secure"},jwtSecret,algorithm="HS256")
 
-        return {"success": True,"message":"Email is Verified","token":token},200
+        return {"success": True,"token":token},200
     except Exception as e:
         return {"success": False, "message":f"Somthing Went Wrong: {str(e)}"},406
 
@@ -256,7 +256,7 @@ def change():
         cursor.close()
         return jsonify({"success": False,'message': f"Somthing Went Wrong: {str(e)}"}), 406
 
-# Get All Products in the Orders
+# Get All Products in the Cart
 @app.route('/cart-products', methods=['GET'])
 def get_user_cart_products():
     try:
@@ -355,4 +355,38 @@ def get_all_brands():
     except Exception as e:
         print('Error executing get_user_orders query:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
+
+# Cancel an Order
+@app.route('/order', methods=['DELETE'])
+def confirm():
+    try:
+  
+        orderID = request.json.get('orderID')
+        if orderID ==None:
+            return {"success": False,"message":"Missing Parameter"},406
+        cursor = myDB.cursor(dictionary=True)
+
+        # Delete all Products in the Order
+        query = f"DELETE FROM orderProducts WHERE `order`={orderID}"
+        cursor.execute(query)
+        myDB.commit()
+
+        # Delete the Order Itself
+        query = f"DELETE FROM `Order` WHERE id={orderID}"
+        cursor.execute(query)
+        myDB.commit()
+
+        # Close the Connection
+        cursor.close()
+
+        # Return the data as a JSON response
+        return jsonify({'success': True,"message":"Order Canceled Successfully"})
+    
+    except Exception as e:
+        response =  jsonify({"success": False, 'message': f"Somthing went Wrong: {str(e)}"})
+        status = 406
+
+
+    cursor.close()
+    return response,status
 

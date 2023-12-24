@@ -120,7 +120,6 @@ def add_payment_methods():
         print('Error adding payment method:', str(e))
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
-
 # remove payment methods
 @app.route('/removePaymentMethods', methods=['DELETE'])
 def remove_payment_methods():

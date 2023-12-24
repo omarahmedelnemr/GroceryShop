@@ -282,6 +282,7 @@ def confirm():
     try:
   
         userID = request.json.get('email')
+        userPayment = request.json.get('payemntMethod')
         if userID ==None:
             return {"success": False,"message":"Missing Parameter"},406
         orderDate = str(datetime.now()).split(".")[0]
@@ -342,3 +343,4 @@ def confirm():
 
     cursor.close()
     return response,status
+
