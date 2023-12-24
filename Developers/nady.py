@@ -4,6 +4,7 @@ from datetime import datetime,timedelta
 
 app = Blueprint('nady', __name__)
 
+# Get Products List
 @app.route('/getallproducts', methods=['GET'])
 def get_all_product():
     try:
@@ -36,6 +37,7 @@ def get_all_product():
     cursor.close()
     return response,status
 
+# Get Product Filtered By Price
 @app.route('/filterbyprice', methods=['GET'])
 def fliter_by_price():
     try:
@@ -73,7 +75,7 @@ def fliter_by_price():
 
     cursor.close()
     return response,status
-
+# Get Product Filtered By Brand Name
 @app.route('/filterbybrand', methods=['GET'])
 def fliter_by_brand():
     try:
@@ -111,6 +113,7 @@ def fliter_by_brand():
     cursor.close()
     return response,status
 
+# Get a Spicific Product Info 
 @app.route('/getproductinfo', methods=['GET'])
 def get_product_info():
     try:
@@ -146,6 +149,7 @@ def get_product_info():
     cursor.close()
     return response,status    
 
+# add a Product to a Cart With Quantity
 @app.route('/addToCart', methods=['POST'])
 def add_to_cart():
     try:
@@ -201,6 +205,7 @@ def add_to_cart():
     cursor.close()
     return response,status
 
+# Remove a Product  Quantity From Cart
 @app.route('/removefromcart', methods=['DELETE'])
 def delete_from_cart():
     try:
@@ -271,6 +276,7 @@ def delete_from_cart():
         status = 406
         return response,status
 
+# Transfar all Products From CartProducts To OrderProducts
 @app.route('/confirm', methods=['POST'])
 def confirm():
     try:
