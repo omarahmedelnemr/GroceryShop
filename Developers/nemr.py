@@ -1,21 +1,17 @@
 from flask import Blueprint, request, jsonify
 import jwt
-from flask_cors import CORS
-from middleware.labels import addLabels
 from middleware.sendMail import generate_random_code,send_email
 from DB_Connect import myDB
+from datetime import datetime
 
 jwtSecret = 'GroceryShop' 
 
 app = Blueprint('nemr', __name__,url_prefix='/')
-CORS(app)
-
-
 
 # Endpoint for user login
 @app.route('/login', methods=['POST'])
 def login():
-    cursor = myDB.cursor()
+    cursor = myDB.cursor(dictionary=True)
 
     try: 
 
@@ -24,37 +20,30 @@ def login():
 
         # Check Parameter Exictence
         if (email == None or password == None):
-            return {"message":"Missing Parameter"},406
+            cursor.close()
+            return {"success": False,"message":"Missing Parameter"},406
 
         # Check if the user exists in the Users table
         query = f"SELECT * FROM User WHERE email = '{email}' AND password = '{password}'"
         cursor.execute(query)
         user = cursor.fetchone()
 
-        # Close the database connection
+        # Check if the User Exist
         if user != None:
-            result = addLabels(user,cursor.description,0)
             
             # Generate JWT token
             payload = {
-                'email': result['email']
+                'email': user['email']
             }
-            print(payload)
-            print("Flag 0")
             token = jwt.encode(payload, jwtSecret, algorithm='HS256')
-
-            print("Flag 1")
-
-            result["token"] = token
-            response =  jsonify({'message': 'Done',"data":result})
+            user["token"] = token            
+            response =  jsonify({"success": True,"data":user})
             status = 200
         else:
-            
-            response =  jsonify({'message': 'Wrong Email or Password'})
+            response =  jsonify({"success": False,'message': 'Wrong Email or Password'})
             status = 404
-    except:
-            
-            response = jsonify({'message': 'Somthing went Wrong'})
+    except Exception as e:
+            response = jsonify({"success": False,'message': f'Somthing Went Wrong: {str(e)}'})
             status = 406
 
     cursor.close()
@@ -72,7 +61,7 @@ def signup():
         birthDate = request.json.get('birthDate')
         address = request.json.get('address')
 
-        # Check Parameter Exictence
+        # Check Parameter Existence
         if (
             email          == None 
             or password    == None
@@ -81,17 +70,17 @@ def signup():
             or birthDate   == None
             or address     == None
             ):
-            return {"message":"Missing Parameter"},406
+            return {"success": False,"message":"Missing Parameter"},406
 
         # Connect to the MySQL database
-        cursor = myDB.cursor()
+        cursor = myDB.cursor(dictionary=True)
 
         # check if User Exist 
         query = f"SELECT * FROM User WHERE email = '{email}'"
         cursor.execute(query)
         if cursor.fetchall() !=[]:
              cursor.close()
-             return {"message":"Email Are Already in Use"},406
+             return {"success": False,"message":"Email Are Already in Use"},406
 
         # Insert a new user into the Users table
         query = f"""INSERT INTO User (email,password,name,phoneNumber,birthDate,address)VALUES ( 
@@ -99,17 +88,22 @@ def signup():
         '{password}', 
         '{name}', 
         '{phonenumber}', 
-        '{birthDate}',
+        '{datetime.strptime(birthDate, "%Y-%m-%d").date()}',
         '{address}'
         )
         """
         cursor.execute(query)
         myDB.commit()
 
+        # Create a Cart For the User
+        query = f"INSERT INTO Cart (id,totalPrice,userID) VALUES (default,0,'{email}')"
+        cursor.execute(query)
+        myDB.commit()
+
         query = f"SELECT * FROM User WHERE email = '{email}'"
         cursor.execute(query)
         newUser = cursor.fetchone()
-        result = addLabels(newUser,cursor.description,0)
+        
 
         # Close the database connection
 
@@ -120,12 +114,12 @@ def signup():
 
         token = jwt.encode(payload, jwtSecret, algorithm='HS256')
 
-        result['token'] = token
+        newUser['token'] = token
         # Return the token in the response
-        response =  jsonify({"message":"Done",'data': result})
-        status =200
-    except:
-        response =  jsonify({'message': "Somthing went Wrong"})
+        response =  jsonify({"success": True,"message":"Done",'data': newUser})
+        status = 200
+    except Exception as e:
+        response =  jsonify({"success": False,'message': f"Somthing Went Wrong: {str(e)}"})
         status = 406
 
 
@@ -140,12 +134,12 @@ def send_OTP():
         
         # Check Parameter Exictence
         if (email == None):
-            return {"message":"Missing Parameter"},406
+            return {"success": False, "message":"Missing Parameter"},406
         
         otp = generate_random_code()
 
         # DB
-        cursor = myDB.cursor()
+        cursor = myDB.cursor(dictionary=True)
 
         # Delete Eny Old OTPs
         query = f"DELETE FROM otp where email = '{email}';"
@@ -161,9 +155,9 @@ def send_OTP():
         send_email(email,"Grocery Shop Verfication Code",f"Your OTP Code is :{otp}")
 
         cursor.close()
-        return {"message":"Email is Sent"}, 200
-    except:
-        return {"message":"Somthing Went Wrong"},406
+        return {"success": True, "message":"Email is Sent"}, 200
+    except Exception as e:
+        return {"success": False, "message":f"Somthing Went Wrong: {str(e)}"},406
 
 # Validating OTP for Verfication 
 @app.route("/check-otp",methods=["POST"])
@@ -172,16 +166,16 @@ def check_OTP():
         email = request.json.get("email")
         otp_sent = request.json.get("otp")
         if email == None or otp_sent ==None:
-            return {"message":"Missing Parameter"},406
+            return {"success": False, "message":"Missing Parameter"},406
         # DB
-        cursor = myDB.cursor()
+        cursor = myDB.cursor(dictionary=True)
 
         # Get The Users OTP
         query = f"SELECT otp FROM otp where email = '{email}';"
         cursor.execute(query)
         otp_saved = cursor.fetchone()[0]
         if (int(otp_sent) != int(otp_saved)):
-            return {"message":"Wrong Code"},404
+            return {"success": False, "message":"Wrong Code"},404
         
         #  Delete From DB
         query = f"DELETE FROM otp where email = '{email}';"
@@ -192,14 +186,14 @@ def check_OTP():
         # Set a Security Token For Private Operations
         token = jwt.encode({"status":"secure"},jwtSecret,algorithm="HS256")
 
-        return {"message":"Email is Verified","token":token},200
-    except:
-        return {"message":"Somthing Went Wrong"},406
+        return {"success": True,"message":"Email is Verified","token":token},200
+    except Exception as e:
+        return {"success": False, "message":f"Somthing Went Wrong: {str(e)}"},406
 
 # Change Password Using token and New Passwords
 @app.route('/forget-password',methods= ['POST'])
 def forget():
-    cursor = myDB.cursor()
+    cursor = myDB.cursor(dictionary=True)
     try:
 
         email = request.json.get("email")
@@ -208,12 +202,12 @@ def forget():
         
         # Check Parameter Exictence
         if (email == None or password == None or token == None):
-            return {"message":"Missing Parameter"},406
+            return {"success": False, "message":"Missing Parameter"},406
         
         # Check the Token
         try:
             verf = jwt.decode(token,jwtSecret,algorithms="HS256")
-        except:
+        except Exception as e:
             return {"message":"The Token is Wrong, Not Authorized"},401
         # Insert a new user into the Users table
         query = f"UPDATE User SET password = '{password}' WHERE email = '{email}'"
@@ -221,9 +215,9 @@ def forget():
         cursor.execute(query)
         myDB.commit()
         
-        response =  jsonify({"message":"Done"})
-    except:
-        response =  jsonify({'message': "Somthing went Wrong"})
+        response =  jsonify({"success": True, "message":"Password has Been Reset"})
+    except Exception as e:
+        response =  jsonify({"success": False, 'message': f"Somthing Went Wrong: {str(e)}"})
 
     cursor.close()
     print(response)
@@ -233,7 +227,7 @@ def forget():
 @app.route('/change-password',methods= ['POST'])
 def change():
     try:
-        cursor = myDB.cursor()
+        cursor = myDB.cursor(dictionary=True)
 
         email = request.json.get("email")
         oldpassword = request.json.get("oldpassword")
@@ -241,7 +235,7 @@ def change():
 
         # Check Parameter Exictence
         if (email == None or oldpassword == None or newpassword == None):
-            return {"message":"Missing Parameter"},406
+            return {"success": False, "message":"Missing Parameter"},406
 
         # Check Password
         query = f"SELECT password FROM User WHERE email = '{email}'"
@@ -249,7 +243,7 @@ def change():
         user_password = cursor.fetchone()[0]
         print(f"New {newpassword} Old: {oldpassword}, real: {user_password}")
         if(user_password != oldpassword):
-            return {"message":"Wrong Password"},406
+            return {"success": False,"message":"Wrong Password"},406
         
         # Insert a new user into the Users table
         query = f"UPDATE User SET password = '{newpassword}' WHERE email = '{email}'"
@@ -257,9 +251,84 @@ def change():
         myDB.commit()
         
         cursor.close()
-        return jsonify({"message":"Password Changed"}), 200
-    except:
+        return jsonify({"success": True,"message":"Password Changed"}), 200
+    except Exception as e:
         cursor.close()
-        return jsonify({'message': "Somthing went Wrong"}), 406
+        return jsonify({"success": False,'message': f"Somthing Went Wrong: {str(e)}"}), 406
 
+# Get All Products in the Orders
+@app.route('/cart-products', methods=['GET'])
+def get_user_cart_products():
+    try:
+        user_id = request.args.get('email')
 
+        if user_id == None:
+            return jsonify({"success": False, "message":"Missing Parameter"}),406
+        
+        # Create a cursor object to interact with the database
+        cursor = myDB.cursor(dictionary=True)
+
+        # Perform a search for orders associated with the user
+        query = f"SELECT * FROM `Cart` WHERE userID = '{user_id}'"
+        cursor.execute(query)
+        cart = cursor.fetchone()
+
+        query = f"""
+            SELECT 
+                product.id,
+                product.productName,
+                product.productPrice,
+                product.productImage,
+                cp.quantity as orderedQuantity,
+                product.calories,
+                product.discount,
+                Brand.name as brand,
+                Brand.nationality 
+            FROM CartProduct as cp 
+                INNER JOIN product on cp.productID=product.id 
+                INNER JOIN Brand on product.brand = Brand.id 
+            WHERE cp.cartID={cart['id']};
+        """
+        cursor.execute(query)
+        cart['products'] = cursor.fetchall()
+
+        cursor.close()
+
+        return jsonify({'success': True, 'data': cart})
+
+    except Exception as e:
+        print('Error executing get_user_orders query:', str(e))
+        return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
+
+# Get All Products That Has a Discount
+@app.route('/get-discounts', methods=['GET'])
+def get_all_discounts():
+    try:
+
+        # Create a cursor object to interact with the database
+        cursor = myDB.cursor(dictionary=True)
+
+        query = f"""
+            SELECT product.id,
+                product.productName,
+                product.productPrice,
+                product.productImage,
+                product.calories,
+                product.discount,
+                Brand.name as brand,
+                Brand.nationality
+            FROM product
+                INNER JOIN Brand on product.brand = Brand.id
+            WHERE product.discount>0
+            ORDER BY product.discount DESC;
+        """
+        cursor.execute(query)
+        discount_list = cursor.fetchall()
+
+        cursor.close()
+
+        return jsonify({'success': True, 'data': discount_list})
+
+    except Exception as e:
+        print('Error executing get_user_orders query:', str(e))
+        return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
