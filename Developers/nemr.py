@@ -358,7 +358,7 @@ def get_all_brands():
 
 # Cancel an Order
 @app.route('/order', methods=['DELETE'])
-def confirm():
+def cancelOrder():
     try:
   
         orderID = request.json.get('orderID')
