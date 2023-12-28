@@ -337,7 +337,7 @@ def get_all_discounts():
 @app.route('/brands', methods=['GET'])
 def get_all_brands():
     try:
-        myDB.connect()
+        myDB.reconnect()
         # Create a cursor object to interact with the database
         cursor = myDB.cursor(dictionary=True)
 
