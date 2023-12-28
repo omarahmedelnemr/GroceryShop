@@ -11,6 +11,10 @@ app = Blueprint('nemr', __name__,url_prefix='/')
 # Endpoint for user login
 @app.route('/login', methods=['POST'])
 def login():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     cursor = myDB.cursor(dictionary=True)
 
     try: 
@@ -53,6 +57,10 @@ def login():
 # Endpoint for user signup
 @app.route('/signup', methods=['POST'])
 def signup():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try: 
         email = request.json.get('email')
         name = request.json.get('name')
@@ -129,6 +137,10 @@ def signup():
 # Sending OTP for Verfication 
 @app.route("/send-otp",methods=["POST"])
 def send_OTP():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         email = request.json.get("email")
         
@@ -162,6 +174,10 @@ def send_OTP():
 # Validating OTP for Verfication 
 @app.route("/check-otp",methods=["POST"])
 def check_OTP():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         email = request.json.get("email")
         otp_sent = request.json.get("otp")
@@ -193,6 +209,10 @@ def check_OTP():
 # Change Password Using token and New Passwords
 @app.route('/forget-password',methods= ['POST'])
 def forget():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     cursor = myDB.cursor(dictionary=True)
     try:
 
@@ -226,6 +246,10 @@ def forget():
 # Change Password Using old and New Passwords
 @app.route('/change-password',methods= ['POST'])
 def change():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         cursor = myDB.cursor(dictionary=True)
 
@@ -259,6 +283,10 @@ def change():
 # Get All Products in the Cart
 @app.route('/cart-products', methods=['GET'])
 def get_user_cart_products():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         user_id = request.args.get('email')
 
@@ -303,6 +331,10 @@ def get_user_cart_products():
 # Get All Products That Has a Discount
 @app.route('/discounts', methods=['GET'])
 def get_all_discounts():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
 
         # Create a cursor object to interact with the database
@@ -336,8 +368,11 @@ def get_all_discounts():
 # Get All Brands on the System
 @app.route('/brands', methods=['GET'])
 def get_all_brands():
-    try:
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
         myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
+    try:
         # Create a cursor object to interact with the database
         cursor = myDB.cursor(dictionary=True)
 
@@ -359,6 +394,10 @@ def get_all_brands():
 # Cancel an Order
 @app.route('/order', methods=['DELETE'])
 def cancelOrder():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         orderID = request.json.get('orderID')

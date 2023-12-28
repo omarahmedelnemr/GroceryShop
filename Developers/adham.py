@@ -7,6 +7,10 @@ app = Blueprint('adham', __name__)
 # search products by keyword
 @app.route('/getBySearch', methods=['GET'])
 def get_by_search():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         keyword = request.args.get('keyword')
         # Check Parameter Existence
@@ -39,6 +43,10 @@ def get_by_search():
 # filter products by nationality
 @app.route('/filterByNationality', methods=['GET'])
 def filter_by_nationality():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         nationality = request.args.get('nationality')
         if nationality == None:
@@ -71,6 +79,10 @@ def filter_by_nationality():
 # get payment methods for a user
 @app.route('/getPaymentMethods', methods=['GET'])
 def get_payment_methods():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         user_id = request.args.get('userId')
         if user_id == None:
@@ -92,6 +104,10 @@ def get_payment_methods():
 # add payment methods
 @app.route('/addPaymentMethods', methods=['POST'])
 def add_payment_methods():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         data = request.json
 
@@ -123,6 +139,10 @@ def add_payment_methods():
 # remove payment methods
 @app.route('/removePaymentMethods', methods=['DELETE'])
 def remove_payment_methods():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         user_id = request.args.get('userId')
         payment_method_id = request.args.get('paymentMethodId')
@@ -145,6 +165,10 @@ def remove_payment_methods():
 # get user's orders
 @app.route('/myOrder', methods=['GET'])
 def get_user_orders():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
         user_id = request.args.get('email')
 

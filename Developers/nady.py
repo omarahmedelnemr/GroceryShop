@@ -7,6 +7,10 @@ app = Blueprint('nady', __name__)
 # Get Products List
 @app.route('/getallproducts', methods=['GET'])
 def get_all_product():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
 
         cursor = sqlcon.cursor(dictionary=True)
@@ -40,6 +44,10 @@ def get_all_product():
 # Get Product Filtered By Price
 @app.route('/filterbyprice', methods=['GET'])
 def fliter_by_price():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         min= request.args.get('min')
@@ -75,9 +83,14 @@ def fliter_by_price():
 
     cursor.close()
     return response,status
+
 # Get Product Filtered By Brand Name
 @app.route('/filterbybrand', methods=['GET'])
 def fliter_by_brand():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         brand= request.args.get('brand')
@@ -116,6 +129,10 @@ def fliter_by_brand():
 # Get a Spicific Product Info 
 @app.route('/getproductinfo', methods=['GET'])
 def get_product_info():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
             
         id = request.args.get('prodID')
@@ -152,6 +169,10 @@ def get_product_info():
 # add a Product to a Cart With Quantity
 @app.route('/addToCart', methods=['POST'])
 def add_to_cart():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         prodID = request.json.get('prodID')
@@ -208,6 +229,10 @@ def add_to_cart():
 # Remove a Product  Quantity From Cart
 @app.route('/removefromcart', methods=['DELETE'])
 def delete_from_cart():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         prodID = request.json.get('prodID')
@@ -279,6 +304,10 @@ def delete_from_cart():
 # Transfar all Products From CartProducts To OrderProducts
 @app.route('/confirm', methods=['POST'])
 def confirm():
+    # Check if the Database Lost The Connection
+    if not (sqlcon.is_connected()):
+        sqlcon.reconnect()
+        print("DB Connection Was Lost, But Restored")
     try:
   
         userID = request.json.get('email')
