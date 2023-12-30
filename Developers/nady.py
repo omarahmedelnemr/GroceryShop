@@ -28,6 +28,16 @@ def get_all_product():
                 FROM product INNER JOIN Brand ON product.brand = Brand.id;"""
         cursor.execute(query)
         data = cursor.fetchall()
+        
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(data)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["lastDayOrders"] = cursor.fetchone()['c']
 
         # Close the database connection
         cursor.close()
@@ -71,6 +81,17 @@ def fliter_by_price():
                 """
         cursor.execute(query)
         data = cursor.fetchall()
+
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(data)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["lastDayOrders"] = cursor.fetchone()['c']
+
         # Close the database connection
         cursor.close()
         # Return the data as a JSON response
@@ -113,6 +134,17 @@ def fliter_by_brand():
                 """
         cursor.execute(query)
         data = cursor.fetchall()
+
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(data)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["lastDayOrders"] = cursor.fetchone()['c']
+
         # Close the database connection
         cursor.close()
         # Return the data as a JSON response
@@ -155,6 +187,17 @@ def get_product_info():
                 """
         cursor.execute(query)
         data = cursor.fetchall()
+
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(data)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={data[i]['id']};"
+            cursor.execute(query)
+            data[i]["lastDayOrders"] = cursor.fetchone()['c']
+            
         # Close the database connection
         cursor.close()
         # Return the data as a JSON response
@@ -324,31 +367,34 @@ def confirm():
             ); """
 
         cursor.execute(query)
-        sqlcon.commit()
-
         # Get Order ID
         cursor.execute(f"SELECT id FROM `Order` WHERE userID='{userID}' AND orderDate='{orderDate}'")
         orderID = cursor.fetchone()['id']
-
-        # Transfar all Products From CartProducts To OrderProducts
-        query = f"""
-        INSERT INTO orderProducts VALUES (
-            {orderID},
-            (SELECT cp.productID FROM CartProduct as cp
-                inner JOIN Cart as c ON c.id = cp.cartID
-                WHERE c.userID = 'Alice@gmail.com'),
-            (SELECT cp.quantity FROM CartProduct as cp
-                inner JOIN Cart as c ON c.id = cp.cartID
-                WHERE c.userID = 'Alice@gmail.com')
-        )
-        """
-        cursor.execute(query)
         sqlcon.commit()
 
-        # Delete All Products in the Cart
-        # Get Cart ID
-        cursor.execute(f"SELECT id FROM Cart WHERE userID= '{userID}'")
+        # Transfar all Products From CartProducts To OrderProducts
+        # Get All Products
+        query = f"SELECT id FROM `Cart` WHERE userID='{userID}'"
+        cursor.execute(query)
         cartID = cursor.fetchone()['id']
+
+        print("cartID:",cartID)
+        query = f"SELECT * FROM CartProduct WHERE cartID={cartID}"
+        cursor.execute(query)
+        allCartProdcuts = cursor.fetchall()
+        print(allCartProdcuts)
+        for i in allCartProdcuts:
+            query = f"""
+                INSERT INTO orderProducts VALUES (
+                    {orderID},
+                    {i['productID']},
+                    {i['quantity']}
+                );
+            """
+            print(query)
+            cursor.execute(query)
+        sqlcon.commit()
+
 
         query = f"DELETE FROM CartProduct WHERE cartID={cartID}"
         cursor.execute(query)

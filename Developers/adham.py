@@ -33,6 +33,16 @@ def get_by_search():
         cursor.execute(query)
         products = cursor.fetchall()
 
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(products)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={products[i]['id']};"
+            cursor.execute(query)
+            products[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={products[i]['id']};"
+            cursor.execute(query)
+            products[i]["lastDayOrders"] = cursor.fetchone()['c']
+
         cursor.close()
         return jsonify({'success': True, 'data': products})
 
@@ -67,6 +77,16 @@ def filter_by_nationality():
                 FROM product INNER JOIN Brand ON product.brand = Brand.id WHERE Brand.nationality = "{nationality}";"""
         cursor.execute(query)
         products = cursor.fetchall()
+
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(products)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={products[i]['id']};"
+            cursor.execute(query)
+            products[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={products[i]['id']};"
+            cursor.execute(query)
+            products[i]["lastDayOrders"] = cursor.fetchone()['c']
 
         cursor.close()
 
@@ -204,6 +224,16 @@ def get_user_orders():
             cursor.execute(query)
             orders[i]['products'] = cursor.fetchall()
 
+            #  Adding Orders Number and Last 24 Hours Orders
+            for z in range(len(orders[i]['products'])):
+                query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={orders[i]['products'][z]['id']};"
+                cursor.execute(query)
+                orders[i]['products'][z]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+                query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={orders[i]['products'][z]['id']};"
+                cursor.execute(query)
+                orders[i]['products'][z]["lastDayOrders"] = cursor.fetchone()['c']
+                
         cursor.close()
 
         return jsonify({'success': True, 'data': orders})

@@ -319,7 +319,7 @@ def get_user_cart_products():
         """
         cursor.execute(query)
         cart['products'] = cursor.fetchall()
-
+    
         cursor.close()
 
         return jsonify({'success': True, 'data': cart})
@@ -356,6 +356,16 @@ def get_all_discounts():
         """
         cursor.execute(query)
         discount_list = cursor.fetchall()
+
+        #  Adding Orders Number and Last 24 Hours Orders
+        for i in range(len(discount_list)):
+            query = f"SELECT COUNT(*) as c  FROM orderProducts WHERE product={discount_list[i]['id']};"
+            cursor.execute(query)
+            discount_list[i]["totalOrdersNumber"] = cursor.fetchone()['c']
+
+            query = f"SELECT COUNT(*) as c FROM orderProducts inner join `Order` as ord on orderProducts.`order` = ord.id WHERE ord.orderDate>= NOW() - INTERVAL 24 HOUR and product={discount_list[i]['id']};"
+            cursor.execute(query)
+            discount_list[i]["lastDayOrders"] = cursor.fetchone()['c']
 
         cursor.close()
 
