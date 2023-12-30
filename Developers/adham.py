@@ -5,7 +5,7 @@ from DB_Connect import myDB
 app = Blueprint('adham', __name__)
 
 # search products by keyword
-@app.route('/getBySearch', methods=['GET'])
+@app.route('/getbysearch', methods=['GET'])
 def get_by_search():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):
@@ -51,7 +51,7 @@ def get_by_search():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 # filter products by nationality
-@app.route('/filterByNationality', methods=['GET'])
+@app.route('/filterbynationality', methods=['GET'])
 def filter_by_nationality():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):
@@ -97,7 +97,7 @@ def filter_by_nationality():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 # get payment methods for a user
-@app.route('/getPaymentMethods', methods=['GET'])
+@app.route('/getpaymentmethods', methods=['GET'])
 def get_payment_methods():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):
@@ -122,7 +122,7 @@ def get_payment_methods():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 # add payment methods
-@app.route('/addPaymentMethods', methods=['POST'])
+@app.route('/addpaymentmethods', methods=['POST'])
 def add_payment_methods():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):
@@ -157,7 +157,7 @@ def add_payment_methods():
         return jsonify({'success': False, 'message': f'Internal Server Error: {str(e)}'}), 500
 
 # remove payment methods
-@app.route('/removePaymentMethods', methods=['DELETE'])
+@app.route('/removepaymentmethods', methods=['DELETE'])
 def remove_payment_methods():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):
@@ -183,7 +183,7 @@ def remove_payment_methods():
         return jsonify({'success': False, 'message': f"Internal Server Error: {str(e)}"}), 500
     
 # get user's orders
-@app.route('/myOrder', methods=['GET'])
+@app.route('/myorder', methods=['GET'])
 def get_user_orders():
     # Check if the Database Lost The Connection
     if not (myDB.is_connected()):

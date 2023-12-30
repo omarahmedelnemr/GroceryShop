@@ -210,7 +210,7 @@ def get_product_info():
     return response,status    
 
 # add a Product to a Cart With Quantity
-@app.route('/addToCart', methods=['POST'])
+@app.route('/addtocart', methods=['POST'])
 def add_to_cart():
     # Check if the Database Lost The Connection
     if not (sqlcon.is_connected()):
