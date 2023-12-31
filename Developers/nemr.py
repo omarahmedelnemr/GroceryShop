@@ -87,13 +87,11 @@ def signup():
              return {"success": False,"message":"Email Are Already in Use"},406
 
         # Insert a new user into the Users table
-        query = f"""INSERT INTO User (email,password,name,phoneNumber,birthDate,address)VALUES ( 
+        query = f"""INSERT INTO User (email,password,name,phoneNumber)VALUES ( 
         '{email}',
         '{password}', 
         '{name}', 
-        '{phonenumber}', 
-        '{None}',
-        '{None}'
+        '{phonenumber}'
         )
         """
         cursor.execute(query)
