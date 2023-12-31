@@ -66,8 +66,6 @@ def signup():
         name = request.json.get('name')
         phonenumber = request.json.get('phoneNumber')
         password = request.json.get('password')
-        birthDate = request.json.get('birthDate')
-        address = request.json.get('address')
 
         # Check Parameter Existence
         if (
@@ -75,8 +73,6 @@ def signup():
             or password    == None
             or name        == None
             or phonenumber == None
-            or birthDate   == None
-            or address     == None
             ):
             return {"success": False,"message":"Missing Parameter"},406
 
@@ -96,8 +92,8 @@ def signup():
         '{password}', 
         '{name}', 
         '{phonenumber}', 
-        '{datetime.strptime(birthDate, "%Y-%m-%d").date()}',
-        '{address}'
+        '{None}',
+        '{None}'
         )
         """
         cursor.execute(query)
@@ -113,7 +109,6 @@ def signup():
         newUser = cursor.fetchone()
         
 
-        # Close the database connection
 
         # Generate JWT token
         payload = {
@@ -133,6 +128,73 @@ def signup():
 
     cursor.close()
     return response,status
+
+# Endpoint for user signup
+@app.route('/complete-signup', methods=['POST'])
+def completeSignup():
+    # Check if the Database Lost The Connection
+    if not (myDB.is_connected()):
+        myDB.reconnect()
+        print("DB Connection Was Lost, But Restored")
+    try: 
+        email = request.json.get('email')
+        birthDate = request.json.get('birthDate')
+        address = request.json.get('address')
+
+        # Check Parameter Existence
+        if (
+            email          == None 
+            or birthDate   == None
+            or address     == None
+            ):
+            return {"success": False,"message":"Missing Parameter"},406
+
+        # Connect to the MySQL database
+        cursor = myDB.cursor(dictionary=True)
+
+        # check if User Exist 
+        query = f"SELECT * FROM User WHERE email = '{email}'"
+        cursor.execute(query)
+        if cursor.fetchall() ==[]:
+             cursor.close()
+             return {"success": False,"message":"Not Found"},404
+
+        # Insert a new user into the Users table
+        query = f"""
+            UPDATE User
+            SET address = '{address}',
+                birthDate = '{datetime.strptime(birthDate, "%Y-%m-%d").date()}'
+            WHERE email = '{email}'
+            ;
+        """
+        cursor.execute(query)
+        myDB.commit()
+
+
+        query = f"SELECT * FROM User WHERE email = '{email}'"
+        cursor.execute(query)
+        newUser = cursor.fetchone()
+        
+
+        # Generate JWT token
+        payload = {
+            'email':email,    
+        }
+
+        token = jwt.encode(payload, jwtSecret, algorithm='HS256')
+
+        newUser['token'] = token
+        # Return the token in the response
+        response =  jsonify({"success": True,"message":"Done",'data': newUser})
+        status = 200
+    except Exception as e:
+        response =  jsonify({"success": False,'message': f"Somthing Went Wrong: {str(e)}"})
+        status = 406
+
+
+    cursor.close()
+    return response,status
+
 
 # Sending OTP for Verfication 
 @app.route("/send-otp",methods=["POST"])
